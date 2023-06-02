@@ -29,12 +29,12 @@ import TodoListItem from './components/TodoListItem.vue';
 const STORAGE_KEY = 'vue-todo-ts-v1';
 
 const storage = {
-  save(todoItems: any[]) {
+  save(todoItems: Todo[]) {
     const parsedTodoItems = JSON.stringify(todoItems);
     localStorage.setItem(STORAGE_KEY, parsedTodoItems);
   },
 
-  fetch() {
+  fetch(): Todo[] {
     const todoItems = localStorage.getItem(STORAGE_KEY) || '[]';
     const result = JSON.parse(todoItems);
     return result;
@@ -72,7 +72,11 @@ export default Vue.extend({
       this.todoText = '';
     },
     fetchTodoItems() {
-      this.todoItems = storage.fetch();
+      this.todoItems = storage.fetch().sort((a, b) => {
+        if (a.title < b.title) return -1;
+        if (b.title > a.title) return 1;
+        else return 0;
+      });
     },
     toggleTodoItemComplete(todoItem: Todo, index: number) {
       this.todoItems.splice(index, 1, {
